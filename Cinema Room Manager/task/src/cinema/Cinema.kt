@@ -1,35 +1,5 @@
 package cinema
 
-fun setTreeValues() {
-    val (n1, n2, n3) = List(3) { readln().toInt() }
-}
-
-fun getMaxTax() {
-    val companies = readln().toInt()
-    val annualIncome = IntArray(companies) { readln().toInt() }
-    val taxRate = IntArray(companies) { readln().toInt() }
-    annualIncome.zip(taxRate) { i, j -> i * j }.let {
-        it.indexOf(it.maxOrNull()!!).let { println(it + 1) }
-    }
-}
-
-fun getMaxValueIndex() = List(readln().toInt()) { readln().toInt() }
-    .run { indexOf(maxOrNull()) }
-    .let(::println)
-
-fun getMaxTaxOptimized() = List(readln().toInt()) { readln().toInt() }
-    .map { it * readln().toInt() }
-    .run { indexOf(maxOrNull()) + 1 }
-    .let(::println)
-
-fun findRoot() = Array(4) {
-    readln().toInt()
-}.let {
-    for (i in 1..1000) {
-        if (it[0] * i * i * i + it[1] * i * i + it[2] * i + it[3] == 0) println(i)
-    }
-}
-
 fun main() {
     cinemaRoom()
 }

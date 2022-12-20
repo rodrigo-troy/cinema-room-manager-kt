@@ -7,133 +7,223 @@ import org.hyperskill.hstest.testing.TestedProgram;
 public class CinemaTests extends StageTest<String> {
 
     @DynamicTestingMethod
-    CheckResult mainTest() {
+    CheckResult test1_checkExit() {
 
         TestedProgram program = new TestedProgram();
         String output = program.start().strip();
 
         if (!output.toLowerCase().contains("enter the number of rows")) {
             return CheckResult.wrong("At the beginning your program should ask for entering the number of rows.\n" +
-                "Your output should contain 'Enter the number of rows:'.");
+                                     "Your output should contain 'Enter the number of rows:'.");
         }
 
         output = program.execute("7");
 
         if (!output.toLowerCase().contains("enter the number of seats in each row")) {
             return CheckResult.wrong("After entering the number of rows your program should ask for entering" +
-                " the number of seats in each row.\n" +
-                "Your output should contain 'Enter the number of seats in each row'.");
+                                     " the number of seats in each row.\n" +
+                                     "Your output should contain 'Enter the number of seats in each row'.");
         }
 
-        output = program.execute("8");
-        checkSeats(output, 7, 8);
+        output = program.execute("8").toLowerCase();
 
-        if (!output.toLowerCase().contains("enter a row number:")) {
-            return CheckResult.wrong("After printing the the seating arrangement you should ask for entering a row number.\n" +
-                "Your output should contain 'Enter a row number:'.");
+        if (!output.contains("show the seats") ||
+            !output.contains("buy a ticket") ||
+            !output.contains("exit")) {
+            return CheckResult.wrong("Your menu should contain 3 items:\n" +
+                                     "1. Show the seats\n" +
+                                     "2. Buy a ticket\n" +
+                                     "0. Exit");
         }
 
-        output = program.execute("2");
+        program.execute("0");
 
-        if (!output.toLowerCase().contains("enter a seat number in that row:")) {
-            return CheckResult.wrong("After entering a row number you should ask for entering a seat number in that row.\n" +
-                "Your output should contain 'Enter a seat number in that row:'.");
-        }
-
-        output = program.execute("4");
-        checkTakenSeat(output, 7, 8, 2, 4);
-
-        if (!output.toLowerCase().contains("ticket price")) {
-            return CheckResult.wrong("After entering a row number and a seat number in that row you should print" +
-                " the ticket price.\n" +
-                "Your output should contain 'Ticket price:'.");
-        }
-
-        if (!output.contains("$10")) {
-            return CheckResult.wrong("Looks like you miscalculated the ticket price. Can't find '$10' in your output.");
+        if (!program.isFinished()) {
+            return CheckResult.wrong("After choosing 'Exit' item you should stop your program.");
         }
 
         return CheckResult.correct();
     }
 
     @DynamicTestingMethod
-    CheckResult testTicketPriceCalculation() {
-        TestedProgram program = new TestedProgram();
+    CheckResult test2_checkSeatingArrangement() {
+
+        TestedProgram program;
+        String output;
+
+        program = new TestedProgram();
         program.start();
+        program.execute("7\n8");
 
-        String output = program.execute("7\n8");
-        checkSeats(output, 7, 8);
+        output = program.execute("1").toLowerCase();
+        checkSeats(output,
+                   7,
+                   8);
 
-        output = program.execute("4\n1");
-        checkTakenSeat(output, 7, 8, 4, 1);
+        if (!output.contains("show the seats") ||
+            !output.contains("buy a ticket") ||
+            !output.contains("exit")) {
+            return CheckResult.wrong("After showing the seats arrangement you should print the menu again!");
+        }
+
+        program.stop();
+
+        program = new TestedProgram();
+        program.start();
+        program.execute("2\n2");
+
+        output = program.execute("1");
+        checkSeats(output,
+                   2,
+                   2);
+
+        program.stop();
+
+        program = new TestedProgram();
+        program.start();
+        program.execute("9\n9");
+
+        output = program.execute("1");
+        checkSeats(output,
+                   9,
+                   9);
+
+        program.execute("0");
+        return CheckResult.correct();
+    }
+
+    @DynamicTestingMethod
+    CheckResult test3_checkBuyTicket() {
+
+        TestedProgram program;
+        String output;
+
+        program = new TestedProgram();
+        program.start();
+        program.execute("7\n8");
+
+        output = program.execute("2");
+
+        if (!output.toLowerCase().contains("enter a row number:")) {
+            return CheckResult.wrong("After choosing 'Buy a ticket' item you should ask for entering a row number.\n" +
+                                     "Your output should contain 'Enter a row number:'.");
+        }
+
+        output = program.execute("2");
+
+        if (!output.toLowerCase().contains("enter a seat number in that row:")) {
+            return CheckResult.wrong("After entering a row number you should ask for entering a seat number in that row.\n" +
+                                     "Your output should contain 'Enter a seat number in that row:'.");
+        }
+
+        output = program.execute("4").toLowerCase();
+
+        if (!output.contains("ticket price")) {
+            return CheckResult.wrong("After entering a row number and a seat number in that row you should print" +
+                                     " the ticket price.\n" +
+                                     "Your output should contain 'Ticket price:'.");
+        }
 
         if (!output.contains("$10")) {
             return CheckResult.wrong("Looks like you miscalculated the ticket price. Can't find '$10' in your output.");
         }
 
-        program.stop();
-
-        program = new TestedProgram();
-        program.start();
-
-        output = program.execute("9\n9");
-        checkSeats(output, 9, 9);
-
-        output = program.execute("1\n1");
-        checkTakenSeat(output, 9, 9, 1, 1);
-
-        if (!output.contains("$10")) {
-            return CheckResult.wrong("Looks like you miscalculated the ticket price. Can't find '$10' in your output.");
+        if (!output.contains("show the seats") ||
+            !output.contains("buy a ticket") ||
+            !output.contains("exit")) {
+            return CheckResult.wrong("After buying a ticket you should print the menu again!");
         }
 
-        program.stop();
+        output = program.execute("1");
+        checkTakenSeat(output,
+                       7,
+                       8,
+                       2,
+                       4);
 
-        program = new TestedProgram();
-        program.start();
-
-        output = program.execute("9\n9");
-        checkSeats(output, 9, 9);
-
-        output = program.execute("7\n8");
-        checkTakenSeat(output, 9, 9, 7, 8);
-
-        if (!output.contains("$8")) {
-            return CheckResult.wrong("Looks like you miscalculated the ticket price. Can't find '$8' in your output.");
-        }
-
-        program.stop();
-
-        program = new TestedProgram();
-        program.start();
-
-        output = program.execute("9\n9");
-        checkSeats(output, 9, 9);
-
-        output = program.execute("5\n5");
-        checkTakenSeat(output, 9, 9, 5, 5);
-
-        if (!output.contains("$8")) {
-            return CheckResult.wrong("Looks like you miscalculated the ticket price. Can't find '$8' in your output.");
-        }
-
-        program.stop();
-
-        program = new TestedProgram();
-        program.start();
-
-        output = program.execute("9\n9");
-        checkSeats(output, 9, 9);
-
-        output = program.execute("4\n5");
-        checkTakenSeat(output, 9, 9, 4, 5);
-
-        if (!output.contains("$10")) {
-            return CheckResult.wrong("Looks like you miscalculated the ticket price. Can't find '$10' in your output.");
-        }
+        program.execute("2\n3\n5");
+        output = program.execute("1");
+        checkTakenSeat(output,
+                       7,
+                       8,
+                       3,
+                       5);
 
         return CheckResult.correct();
-
     }
+
+    @DynamicTestingMethod
+    CheckResult test4_checkTicketPrice() {
+
+        TestedProgram program;
+        String output;
+
+        program = new TestedProgram();
+        program.start();
+        program.execute("9\n9");
+
+        program.execute("2");
+        output = program.execute("1\n1");
+
+        if (!output.contains("$10")) {
+            return CheckResult.wrong("Looks like you miscalculated the ticket price. Can't find '$10' in your output.");
+        }
+
+        program.execute("2");
+        output = program.execute("4\n5\n1");
+
+        if (!output.contains("$10")) {
+            return CheckResult.wrong("Looks like you miscalculated the ticket price. Can't find '$10' in your output.");
+        }
+        checkTakenSeat(output,
+                       9,
+                       9,
+                       4,
+                       5);
+
+
+        program.execute("2");
+        output = program.execute("5\n5\n1");
+
+        if (!output.contains("$8")) {
+            return CheckResult.wrong("Looks like you miscalculated the ticket price. Can't find '$8' in your output.");
+        }
+        checkTakenSeat(output,
+                       9,
+                       9,
+                       4,
+                       5);
+        checkTakenSeat(output,
+                       9,
+                       9,
+                       5,
+                       5);
+
+        program.execute("2");
+        output = program.execute("6\n6\n1");
+
+        if (!output.contains("$8")) {
+            return CheckResult.wrong("Looks like you miscalculated the ticket price. Can't find '$8' in your output.");
+        }
+        checkTakenSeat(output,
+                       9,
+                       9,
+                       4,
+                       5);
+        checkTakenSeat(output,
+                       9,
+                       9,
+                       5,
+                       5);
+        checkTakenSeat(output,
+                       9,
+                       9,
+                       6,
+                       6);
+
+        return CheckResult.correct();
+    }
+
 
     private void checkSeats(String output, int rows, int columns) {
 
@@ -168,8 +258,10 @@ public class CinemaTests extends StageTest<String> {
 
             String errorMessage = "The ";
             if (i == 1) {
-                errorMessage += "second ";
+                errorMessage += "first ";
             } else if (i == 2) {
+                errorMessage += "second  ";
+            } else if (i == 3) {
                 errorMessage += "third  ";
             } else {
                 errorMessage += i + "th ";
@@ -256,7 +348,7 @@ public class CinemaTests extends StageTest<String> {
                 String[] splittedLine = line.trim().split(" ");
 
                 if (splittedLine.length != columns + 1) {
-                    errorMessage += "should be printed like in examples. Expected 1 number, " + columns + " symbols and a single space between all of them!";
+                    errorMessage += "should be printed like in examples. Expected 1 number, " + columns + " symbols and a single space between of them!";
                     throw new WrongAnswer(errorMessage);
                 }
 
@@ -264,20 +356,6 @@ public class CinemaTests extends StageTest<String> {
                     errorMessage += "should contain 'B' symbol at " + column + " column";
                     throw new WrongAnswer(errorMessage);
                 }
-
-                continue;
-            }
-
-            String line = splittedOutput[i].replace("" + i, "").trim();
-            String seats = "";
-
-            for (int j = 0; j < columns; j++) {
-                seats += "S ";
-            }
-
-            if (!line.toUpperCase().equals(seats.trim())) {
-                errorMessage += "should be \"" + i + " " + seats.trim() + "\"";
-                throw new WrongAnswer(errorMessage);
             }
         }
     }
