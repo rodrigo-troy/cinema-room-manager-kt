@@ -53,7 +53,7 @@ fun getTicketPrice(cinema: Array<CharArray>, rowIndex: Int): Int {
     } else {
         val frontRows = cinema.size / 2
 
-        if (rowIndex < frontRows) {
+        if (rowIndex <= frontRows) {
             10
         } else {
             8
