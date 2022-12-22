@@ -5,7 +5,6 @@ fun main() {
 }
 
 fun cinemaRoom() {
-
     println("Enter the number of rows:")
     val rows = readln().toInt()
     println("Enter the number of seats in each row:")
@@ -64,15 +63,15 @@ fun getTicketPrice(cinema: Array<CharArray>, rowIndex: Int): Int {
 fun printSeats(cinema: Array<CharArray>) {
     println()
     print("Cinema:\n  ")
-    for (i in 1..cinema[0].size) {
+    (1..cinema[0].size).forEach { i ->
         print("$i ")
     }
 
     println()
 
-    for (i in cinema.indices) {
+    cinema.indices.forEach { i ->
         print("${i + 1} ")
-        for (j in cinema[i].indices) {
+        cinema[i].indices.forEach { j ->
             print("${cinema[i][j]} ")
         }
         println()
