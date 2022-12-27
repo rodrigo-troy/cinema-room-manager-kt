@@ -16,14 +16,40 @@ fun cinemaRoom() {
     while (true) {
         println("1. Show the seats")
         println("2. Buy a ticket")
+        println("3. Statistics")
         println("0. Exit")
 
         when (readln().toInt()) {
             1 -> printSeats(cinema)
             2 -> buyTicket(cinema)
+            3 -> getStatistics(cinema)
             0 -> return
         }
     }
+}
+
+fun getStatistics(cinema: Array<CharArray>) {
+    TODO("Not yet implemented")
+
+    println("Number of purchased tickets: $${getNumberOfPurchasedTickets(cinema)}")
+    println("Percentage: $")
+    println("Current income: $")
+    println("Total income: $")
+
+}
+
+fun getNumberOfPurchasedTickets(cinema: Array<CharArray>): Int {
+    var count = 0
+
+    cinema.forEach { row ->
+        row.forEach { seat ->
+            if (seat == 'B') {
+                count++
+            }
+        }
+    }
+
+    return count
 }
 
 fun buyTicket(cinema: Array<CharArray>) {
