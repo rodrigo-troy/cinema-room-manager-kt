@@ -29,13 +29,44 @@ fun cinemaRoom() {
 }
 
 fun getStatistics(cinema: Array<CharArray>) {
-    TODO("Not yet implemented")
+    println()
+    println("Number of purchased tickets: ${getNumberOfPurchasedTickets(cinema)}")
+    println("Percentage: ${getPercentageOfPurchasedTickets(cinema)}%")
+    println("Current income: $${getCurrentIncome(cinema)}")
+    println("Total income: $${getTotalIncome(cinema)}")
+    println()
+}
 
-    println("Number of purchased tickets: $${getNumberOfPurchasedTickets(cinema)}")
-    println("Percentage: $")
-    println("Current income: $")
-    println("Total income: $")
+fun getTotalIncome(cinema: Array<CharArray>): Int {
+    val rows = cinema.size
+    val seats = cinema[0].size
+    val totalSeats = rows * seats
 
+    return if (totalSeats <= 60) {
+        totalSeats * 10
+    } else {
+        val frontRows = rows / 2
+        val backRows = rows - frontRows
+        frontRows * seats * 10 + backRows * seats * 8
+    }
+}
+
+fun getCurrentIncome(cinema: Array<CharArray>): Int {
+    var income = 0
+
+    cinema.indices.forEach { i ->
+        cinema[i].indices
+            .filter { cinema[i][it] == 'B' }
+            .forEach { income += if (cinema.size * cinema[i].size <= 60 || i < cinema.size / 2) 10 else 8 }
+    }
+
+    return income
+}
+
+fun getPercentageOfPurchasedTickets(cinema: Array<CharArray>): String {
+    val totalSeats = cinema.size * cinema[0].size
+    val purchasedTickets = getNumberOfPurchasedTickets(cinema)
+    return "%.2f".format((purchasedTickets.toDouble() / totalSeats) * 100)
 }
 
 fun getNumberOfPurchasedTickets(cinema: Array<CharArray>): Int {
@@ -59,9 +90,17 @@ fun buyTicket(cinema: Array<CharArray>) {
     println("Enter a seat number in that row:")
     val seatNumber = readln().toInt()
 
+    if (rowNumber > cinema.size || seatNumber > cinema[0].size) {
+        println()
+        println("Wrong input!")
+        println()
+        return buyTicket(cinema)
+    }
+
     if (cinema[rowNumber - 1][seatNumber - 1] == 'B') {
         println("That ticket has already been purchased!")
-        return
+        println()
+        return buyTicket(cinema)
     } else {
         cinema[rowNumber - 1][seatNumber - 1] = 'B'
     }
@@ -104,24 +143,4 @@ fun printSeats(cinema: Array<CharArray>) {
     }
 
     println()
-}
-
-fun printProfit(rows: Int, seats: Int) {
-    println("Total income:\n $${getProfit(rows, seats)}")
-}
-
-fun getProfit(rows: Int, seats: Int): Int {
-    val totalSeats = rows * seats
-    val n = readln().toInt()
-
-    return if (totalSeats <= 60) {
-        totalSeats * 10
-    } else {
-        val frontRows = rows / 2
-        val backRows = rows - frontRows
-        val frontSeats = frontRows * seats
-        val backSeats = backRows * seats
-
-        frontSeats * 10 + backSeats * 8
-    }
 }
