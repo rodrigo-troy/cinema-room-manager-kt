@@ -11,7 +11,7 @@ fun cinemaRoom() {
     val seats = readln().toInt()
     println()
 
-    val cinema = Array(rows) { CharArray(seats) { 'S' } };
+    val cinema = Array(rows) { CharArray(seats) { 'S' } }
 
     while (true) {
         println("1. Show the seats")
